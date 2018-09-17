@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from .models import User, Female_IMS, History_IMS
-import json
+from django.http import JsonResponse
 
 # Create your views here.
 def index(request):
@@ -150,3 +150,7 @@ def ims_result(request):
 def json(request):
     resp = {'errorcode': 100, 'detail': 'Get success'}
     return HttpResponse(json.dumps(resp), content_type="application/json")
+
+def test_json(request):
+    name_dict = {'twz': 'Love python and Django', 'zqxt': 'I am teaching Django'}
+    return JsonResponse(name_dict)
