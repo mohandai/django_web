@@ -24,7 +24,6 @@ urlpatterns = [
     path('login/', views.login),
     path('register/', views.register),
     path('logout/', views.logout),
+    path('ims/submit', views.ims_submit),
     path('ims/', views.ims),
-    path('ims/result', views.ims_result),
-    path('json/',views.test_json)
 ]

@@ -1,11 +1,15 @@
 from django.shortcuts import render,redirect
-from .models import User, Female_IMS, History_IMS
+from .models import User, IMS, History_IMS
 from django.http import JsonResponse
+import json, simplejson
 
 # Create your views here.
 def index(request):
     pass
     return render(request,'project/index.html')
+
+
+# Login/logout/register
  
 def login(request):
     if request.session.get('is_login',None):
@@ -143,14 +147,69 @@ def ims(request):
             return redirect('/ims/result')  #jump to login
     return render(request,'project/ims.html')
 
-def ims_result(request):
-    pass
-    return render(request,'project/ims_result.html')
+def ims_submit(request):
+    if request.method == 'POST':
 
-def json(request):
-    resp = {'errorcode': 100, 'detail': 'Get success'}
-    return HttpResponse(json.dumps(resp), content_type="application/json")
+        data = json.loads(request.body)
+        
+        userid = request.session.get('user_id')
+        user = User.objects.filter(uid=userid)
+        if not user:
+            message = {'message':'Invalid age!','err_type':'login'}
+            return JsonResponse(message)
 
-def test_json(request):
-    name_dict = {'twz': 'Love python and Django', 'zqxt': 'I am teaching Django'}
-    return JsonResponse(name_dict)
+        try:
+            age = int(data['age'])
+        except:
+            message = {'message':'Invalid age!','err_type':'invalid_input'}
+            return JsonResponse(message)
+        if age > 100 or age < 3:
+            message = {'message':'Invalid age!','err_type':'invalid_input'}
+            return JsonResponse(message)
+
+        gender = data['gender']
+        try:
+            if gender != 'male' and gender != 'female':
+                message = {'message':'Invalid sex!','err_type':'invalid_input'}
+                return JsonResponse(message)
+        except:
+            message = {'message':'Invalid sex!','err_type':'invalid_input'}
+            return JsonResponse(message)
+
+        del data['gender']
+        del data['age']
+
+        print("after del gender&age: "+str(data))
+
+        compare_model = IMS.objects.filter(age_group = 3).filter( sex = 'female').values()[0]
+        print("get compare model: ")
+        print(compare_model)
+
+        keys = data.keys()
+        insert_data = {}
+        for k in keys:
+            print(k)
+            try:
+                if data[k] == '':
+                    insert_data[k] = 0
+                else:
+                    insert_data[k] = int(data[k])
+            except:
+                message = {'message':'Invalid input type!','err_type':'invalid_input'}
+                return JsonResponse(message)
+        print('insert_data:')
+        print(insert_data)
+
+
+        #new_history = History_IMS.objects.create()
+        #new_history.userid = request.session.get('user_id')
+        new_history = History_IMS(userid = userid, sex = gender, age = age, **insert_data)
+        new_history.save()
+        print('data saved!')
+        
+
+        #print(post_key)
+        #name_dict = {'twz': 'Love python and Django', 'zqxt': 'I am teaching Django'}
+        return JsonResponse(data)
+    return render(request,'project/ims.html')
+

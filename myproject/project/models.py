@@ -2,17 +2,22 @@ from django.db import models
 
 # Create your models here.
 
+gender = (
+    ('male','male'),
+    ('female','female'),
+)
+
+evaluation = (
+    ('Weak','Weak'),
+    ('Normal','Normal'),
+    ('Strong','Strong'),
+)
+
 class User(models.Model):
 
     uid = models.AutoField(primary_key=True)
     username = models.CharField(max_length=128,unique=True)
     password = models.CharField(max_length=256)
-
-    gender = (
-        ('male','male'),
-        ('female','female'),
-    )
-
     sex = models.CharField(max_length=32,choices=gender, default='male')
     #email = models.EmailField(unique=True, default='123@123.com')
     c_time = models.DateTimeField(auto_now_add=True)
@@ -20,8 +25,10 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
-class Female_IMS (models.Model):
+class IMS (models.Model):
+
     age_group = models.IntegerField(default=0)
+    sex = models.CharField(max_length=32,choices=gender, default='male')
 
     gs_mean = models.IntegerField(default=0)
     apfs_mean = models.IntegerField(default=0)
@@ -50,15 +57,11 @@ class Female_IMS (models.Model):
     sirs_sd = models.IntegerField(default=0)
 
     def __str__(self):
-        return str(self.age_group)
+        return str(self.age_group)+' '+str(self.sex)
 
 
 class History_IMS (models.Model):
     userid = models.IntegerField(default=0)
-    gender = (
-        ('male','male'),
-        ('female','female'),
-    )
 
     sex = models.CharField(max_length=32,choices=gender, default='male')
     age = models.IntegerField(default=0)
@@ -75,6 +78,19 @@ class History_IMS (models.Model):
     ees = models.IntegerField(default=0)
     sers = models.IntegerField(default=0)
     sirs = models.IntegerField(default=0)
+
+    gs_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    apfs_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    ads_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    kfs_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    kes_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    has_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    hers_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    hirs_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    efs_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    ees_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    sers_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    sirs_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
 
     c_time = models.DateTimeField(auto_now_add=True)
 
