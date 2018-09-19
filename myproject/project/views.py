@@ -169,10 +169,9 @@ def insert_and_response(request, test_model, history_obj):
 def get_age_group(age):
     if age < 21:
         return age
-    age_group = 21
-    for a in range(21,101,10):
+    elif age >99:
+        return 100
+    for a in range(21,102,10):
         if age < a:
-            break
-        age_group = a
-    print(age_group)
-    return age_group
+            return a - 10
+    return 100
