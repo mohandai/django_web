@@ -155,61 +155,80 @@ def ims_submit(request):
         userid = request.session.get('user_id')
         user = User.objects.filter(uid=userid)
         if not user:
-            message = {'message':'Invalid age!','err_type':'login'}
+            message = {'message':'Please login!','err_type':'login'}
             return JsonResponse(message)
 
+        message = {'message':'Invalid age!','err_type':'invalid_input'}
         try:
             age = int(data['age'])
         except:
-            message = {'message':'Invalid age!','err_type':'invalid_input'}
             return JsonResponse(message)
         if age > 100 or age < 3:
-            message = {'message':'Invalid age!','err_type':'invalid_input'}
             return JsonResponse(message)
 
         gender = data['gender']
+        message = {'message':'Invalid sex!','err_type':'invalid_input'}
         try:
             if gender != 'male' and gender != 'female':
-                message = {'message':'Invalid sex!','err_type':'invalid_input'}
                 return JsonResponse(message)
         except:
-            message = {'message':'Invalid sex!','err_type':'invalid_input'}
             return JsonResponse(message)
 
         del data['gender']
         del data['age']
 
-        print("after del gender&age: "+str(data))
+        #print("after del gender&age: "+str(data))
 
-        compare_model = IMS.objects.filter(age_group = 3).filter( sex = 'female').values()[0]
+        age_group = get_age_group(age)
+
+        compare_model = IMS.objects.filter(age_group = age_group).filter( sex = gender).values()[0]
+        del compare_model['id']
         print("get compare model: ")
         print(compare_model)
 
         keys = data.keys()
         insert_data = {}
+        z_value = 1.96
         for k in keys:
-            print(k)
+            #print(k)
             try:
                 if data[k] == '':
                     insert_data[k] = 0
                 else:
                     insert_data[k] = int(data[k])
+
+                lb = compare_model[k + '_mean'] - z_value*compare_model[k + '_sd']
+                ub = compare_model[k + '_mean'] + z_value*compare_model[k + '_sd']
+                if insert_data[k] < lb:
+                    insert_data[k+'_eval'] = 'Weak'
+                elif insert_data[k] > ub:
+                    insert_data[k+'_eval'] = 'Strong'
+                else:
+                    insert_data[k+'_eval'] = 'Normal'
             except:
                 message = {'message':'Invalid input type!','err_type':'invalid_input'}
                 return JsonResponse(message)
-        print('insert_data:')
-        print(insert_data)
+
+        #print('insert_data:')
+        #print(insert_data)
 
 
         #new_history = History_IMS.objects.create()
         #new_history.userid = request.session.get('user_id')
         new_history = History_IMS(userid = userid, sex = gender, age = age, **insert_data)
         new_history.save()
+        new_history = History_IMS.objects.filter(id = new_history.id).values()[0]
+        del new_history['id']
+        del new_history['userid']
+        print('print new history:')
+        print(new_history)
         print('data saved!')
-        
 
+        response_data = {'user_raw_data':new_history, 'compare_model':compare_model}
         #print(post_key)
         #name_dict = {'twz': 'Love python and Django', 'zqxt': 'I am teaching Django'}
-        return JsonResponse(data)
+        return JsonResponse(response_data)
     return render(request,'project/ims.html')
 
+def get_age_group(age):
+    return age
