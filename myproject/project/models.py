@@ -59,7 +59,6 @@ class IMS (models.Model):
     def __str__(self):
         return str(self.age_group)+' '+str(self.sex)
 
-
 class History_IMS (models.Model):
     userid = models.IntegerField(default=0)
 
