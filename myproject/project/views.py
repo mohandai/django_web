@@ -120,6 +120,11 @@ def fp_submit(request):
     message = {'message':'Request method must be POST','err_type':'invalid_request'}
     return JsonResponse(message)
 
+def history(request):
+    if not request.session.get('is_login', None):
+        return redirect("/login")
+    return render(request,'project/history.html')
+
 def history_get(request):
     if request.method == 'GET':
         userid = request.session.get('user_id')

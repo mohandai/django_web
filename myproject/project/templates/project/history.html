@@ -1,0 +1,22 @@
+{#login/templates/login/index.html#}
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Homepage</title>
+</head>
+<body>
+<h1>Homepage</h1>
+<ul class="">
+              {% if request.session.is_login %}
+                  <li><a href="#">Welcome back：{{ request.session.user_name }}</a></li>
+                  <li><a href="#">Gender：{{ request.session.sex }}</a></li>
+                  <li><a href="/logout/">Logout</a></li>
+              {% else %}
+                  <li><a href="/login/">Login</a></li>
+                  <li><a href="/register/">Register</a></li>
+              {% endif %}
+</ul>
+</body>
+</html>
