@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>fp test</title>
+</head>
+<body>
+    <style>
+    pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+    .string { color: green; }
+    .number { color: darkorange; }
+    .boolean { color: blue; }
+    .null { color: magenta; }
+    .key { color: red; }
+</style>
+     <div style="margin: 15% 40%;">
+        <h1>fp test</h1>
+
+       <form id="fp_form">
+        {% if message %}
+                    <div class="alert alert-warning">{{ message }}</div>
+                {% endif %}
+            <p>
+                <label for="id_age">Age</label>
+                <input type="text" id="id_age" name="age" placeholder="" autofocus required / >
+            </p>
+
+            <p>
+                <label for="id_gender">Gender</label>
+                <select id="id_gender" name="gender"> 
+                    <option value="male">male</option> 
+                    <option value="female">female</option> 
+                </select> 
+                
+            </p>
+          
+            <p>
+                <label for="id_fdt">fdt</label>
+                <input type="text" id="id_fdt" placeholder="" name="fdt" required >
+            </p>
+
+            <p>
+                <label for="id_hpt9">hpt9</label>
+                <input type="text" id="id_hpt9" placeholder="" name="hpt9" required>
+            </p>
+
+            <p>
+                <label for="id_seb">seb</label>
+                <input type="text" id="id_seb" placeholder="" name="seb" required>
+            </p>
+
+            <p>
+                <label for="id_lj">lj</label>
+                <input type="text" id="id_lj" placeholder="" name="lj" required>
+            </p>
+
+            <p>
+                <label for="id_mwt6">mwt6</label>
+                <input type="text" id="id_mwt6" placeholder="" name="mwt6" required>
+            </p>
+
+            <p>
+                <label for="id_vj">vj</label>
+                <input type="text" id="id_vj" placeholder="" name="vj" required>
+            </p>
+
+            <p>
+                <label for="id_tst">tst</label>
+                <input type="text" id="id_tst" placeholder="" name="tst" required>
+            </p>
+
+            <p>
+                <label for="id_csrt">csrt</label>
+                <input type="text" id="id_csrt" placeholder="" name="csrt" required>
+            </p>
+
+            <p>
+                <label for="id_sts">sts</label>
+                <input type="text" id="id_sts" placeholder="" name="sts" required>
+            </p>
+
+            <p>
+                <label for="id_botb">botb</label>
+                <input type="text" id="id_botb" placeholder="" name="botb" required>
+            </p>
+
+            <input type="button" id="fp_submit" value="Submit fp">
+        </form>
+    </div>
+    <div>
+        <res id='result'>
+        </res>
+    </div>
+ 
+    <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        jQuery(document).ajaxSend(function(event, xhr, settings) {
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function sameOrigin(url) {
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    function safeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+ 
+    if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+});
+    </script>
+    <script>
+        function syntaxHighlight(json) {
+    if (typeof json != 'string') {
+        json = JSON.stringify(json, undefined, 2);
+    }
+    json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+        var cls = 'number';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'key';
+            } else {
+                cls = 'string';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'boolean';
+        } else if (/null/.test(match)) {
+            cls = 'null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+    });
+}
+    </script>
+        <script> 
+            $.fn.serializeJson=function(){
+            var serializeObj={};
+            var array=this.serializeArray();
+            var str=this.serialize();
+            $(array).each(function(){
+                if(serializeObj[this.name]){
+                    if($.isArray(serializeObj[this.name])){
+                        serializeObj[this.name].push(this.value);
+                    }else{
+                        serializeObj[this.name]=[serializeObj[this.name],this.value];
+                    }
+                }else{
+                    serializeObj[this.name]=this.value;
+                }
+            });
+            return serializeObj;
+        };
+    $("#fp_submit").click(function() {
+        form_str = $("#fp_form").serializeJson();
+        console.log('submitted data:');
+        console.log(form_str);
+        
+        $.ajax("/fp/submit",{
+                  data:JSON.stringify(form_str),
+                   contentType:"application/json",
+                   type:"POST",
+                   dataType: 'JSON',
+                   success:function(data){
+                        console.log('responsed data:');
+                        console.log(data);
+                        $("#result").html(syntaxHighlight(data));
+                    }
+             
+        });
+    })
+        </script>
+</body>
+</html>

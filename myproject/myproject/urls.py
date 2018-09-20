@@ -26,4 +26,9 @@ urlpatterns = [
     path('logout/', views.logout),
     path('ims/submit', views.ims_submit),
     path('ims/', views.ims),
+    path('jf/submit', views.jf_submit),
+    path('jf/', views.jf),
+    path('fp/submit', views.fp_submit),
+    path('fp/', views.fp),
+    path('history/', views.history)
 ]

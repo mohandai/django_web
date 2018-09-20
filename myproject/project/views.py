@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
-from .models import User, IMS, History_IMS
+from .models import User, IMS, History_IMS, JF, History_JF, FP, History_FP
 from django.http import JsonResponse
+#from django.core import serializers
 import json
 
 # Create your views here.
@@ -9,7 +10,7 @@ def index(request):
     return render(request,'project/index.html')
 
 
-# Login/logout/register
+#--------------------------Login/logout/register--------------------------
  
 def login(request):
     if request.session.get('is_login',None):
@@ -84,7 +85,7 @@ def logout(request):
     # del request.session['user_name']
     return redirect('/')
 
-#---------------------------------------------------------------------------
+#---------------data API via JSON---------------
 
 def ims(request):
     if not request.session.get('is_login', None):
@@ -94,7 +95,55 @@ def ims(request):
 def ims_submit(request):
     if request.method == 'POST':
         return insert_and_response(request, IMS, History_IMS)
-    return render(request,'project/ims.html')
+    message = {'message':'Request method must be POST','err_type':'invalid_request'}
+    return JsonResponse(message)
+
+def jf(request):
+    if not request.session.get('is_login', None):
+        return redirect("/login")
+    return render(request,'project/jf.html')
+
+def jf_submit(request):
+    if request.method == 'POST':
+        return insert_and_response(request, JF, History_JF)
+    message = {'message':'Request method must be POST','err_type':'invalid_request'}
+    return JsonResponse(message)
+
+def fp(request):
+    if not request.session.get('is_login', None):
+        return redirect("/login")
+    return render(request,'project/fp.html')
+
+def fp_submit(request):
+    if request.method == 'POST':
+        return insert_and_response(request, FP, History_FP)
+    message = {'message':'Request method must be POST','err_type':'invalid_request'}
+    return JsonResponse(message)
+
+def history(request):
+    if request.method == 'GET':
+        userid = request.session.get('user_id')
+        ims_h = get_history(userid, IMS, History_IMS)
+        jf_h = get_history(userid, JF, History_JF)
+        fp_h = get_history(userid, FP, History_FP)
+        integrated_data = {'ims_test_history':ims_h, 'jf_test_history':jf_h, 'fp_test_history':fp_h}
+        return JsonResponse(integrated_data, safe=False)
+    message = {'message':'Request method must be POST','err_type':'invalid_request'}
+    return JsonResponse(message)
+
+
+#-------------------useful functions--------------------
+
+def get_history(userid, test_model, history_obj):
+    #data = history_obj.objects.filter(userid = userid).values()
+    raw_data = list(history_obj.objects.filter(userid = userid).values())
+    history_list = []
+    for item in raw_data:
+        compare_model = test_model.objects.filter(age_group = get_age_group(item['age'])).filter( sex = item['sex']).values()[0]
+        del compare_model['id']
+        history_item = {'history_item':item, 'compare_model':compare_model}
+        history_list.append(history_item)
+    return history_list
 
 def insert_and_response(request, test_model, history_obj):
     if not request.session.get('is_login', None):
@@ -157,7 +206,7 @@ def insert_and_response(request, test_model, history_obj):
     new_history = history_obj(userid = userid, sex = gender, age = age, **insert_data)
     new_history.save()
 
-    new_history = History_IMS.objects.filter(id = new_history.id).values()[0]
+    new_history = history_obj.objects.filter(id = new_history.id).values()[0]
     del new_history['id']
     del new_history['userid']
     print('print new history:')
@@ -167,8 +216,6 @@ def insert_and_response(request, test_model, history_obj):
     return JsonResponse(response_data)
 
 def get_age_group(age):
-    if age < 21:
+    if int(age) < 21:
         return age
-    elif age >99:
-        return 100
     return (age-1)//10*10+1
