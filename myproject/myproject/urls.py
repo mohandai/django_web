@@ -30,5 +30,5 @@ urlpatterns = [
     path('jf/', views.jf),
     path('fp/submit', views.fp_submit),
     path('fp/', views.fp),
-    path('history/', views.history)
+    path('history/get', views.history_get)
 ]

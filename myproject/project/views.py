@@ -120,12 +120,12 @@ def fp_submit(request):
     message = {'message':'Request method must be POST','err_type':'invalid_request'}
     return JsonResponse(message)
 
-def history(request):
+def history_get(request):
     if request.method == 'GET':
         userid = request.session.get('user_id')
-        ims_h = get_history(userid, IMS, History_IMS)
-        jf_h = get_history(userid, JF, History_JF)
-        fp_h = get_history(userid, FP, History_FP)
+        ims_h =retrieve_history(userid, IMS, History_IMS)
+        jf_h = retrieve_history(userid, JF, History_JF)
+        fp_h = retrieve_history(userid, FP, History_FP)
         integrated_data = {'ims_test_history':ims_h, 'jf_test_history':jf_h, 'fp_test_history':fp_h}
         return JsonResponse(integrated_data, safe=False)
     message = {'message':'Request method must be POST','err_type':'invalid_request'}
@@ -134,7 +134,7 @@ def history(request):
 
 #-------------------useful functions--------------------
 
-def get_history(userid, test_model, history_obj):
+def retrieve_history(userid, test_model, history_obj):
     #data = history_obj.objects.filter(userid = userid).values()
     raw_data = list(history_obj.objects.filter(userid = userid).values())
     history_list = []
