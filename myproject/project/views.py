@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from .models import User, IMS, History_IMS
 from django.http import JsonResponse
-import json, simplejson
+import json
 
 # Create your views here.
 def index(request):
@@ -171,7 +171,4 @@ def get_age_group(age):
         return age
     elif age >99:
         return 100
-    for a in range(21,102,10):
-        if age < a:
-            return a - 10
-    return 100
+    return (age-1)//10*10+1
