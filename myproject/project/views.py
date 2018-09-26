@@ -13,6 +13,18 @@ def pom(request):
     pass
     return render(request,'project/Physical outcome measures.html')
 
+def mr(request):
+    pass
+    return render(request,'project/measurement research.html')
+
+def sfm(request):
+    pass
+    return render(request,'project/self-reported measures.html')
+
+def contact(request):
+    pass
+    return render(request,'project/contact.html')
+
 
 #--------------------------Login/logout/register--------------------------
 def login(request):
@@ -103,7 +115,7 @@ def ims_submit(request):
 def jf(request):
     if not request.session.get('is_login', None):
         return redirect("/login")
-    return render(request,'project/jf.html')
+    return render(request,'project/motiontest.html')
 
 def jf_submit(request):
     if request.method == 'POST':
@@ -114,7 +126,7 @@ def jf_submit(request):
 def fp(request):
     if not request.session.get('is_login', None):
         return redirect("/login")
-    return render(request,'project/fp.html')
+    return render(request,'project/functest.html')
 
 def fp_submit(request):
     if request.method == 'POST':
@@ -230,4 +242,6 @@ def insert_and_response(request, test_model, history_obj):
 def get_age_group(age):
     if int(age) < 21:
         return age
+    if int(age) >= 100:
+        return 100
     return (age-1)//10*10+1

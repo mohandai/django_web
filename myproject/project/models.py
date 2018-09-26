@@ -101,6 +101,8 @@ class JF (models.Model):
     age_group = models.IntegerField(default=0)
     sex = models.CharField(max_length=32,choices=gender, default='male')
 
+    nf_mean = models.IntegerField(default=0)
+    ne_mean = models.IntegerField(default=0)
     kf_mean = models.IntegerField(default=0)
     ke_mean = models.IntegerField(default=0)
     apf_mean = models.IntegerField(default=0)
@@ -113,6 +115,8 @@ class JF (models.Model):
     ser_mean = models.IntegerField(default=0)
     sir_mean = models.IntegerField(default=0)
 
+    nf_sd = models.IntegerField(default=0)
+    ne_sd = models.IntegerField(default=0)
     kf_sd = models.IntegerField(default=0)
     ke_sd = models.IntegerField(default=0)
     apf_sd = models.IntegerField(default=0)
@@ -134,6 +138,8 @@ class History_JF (models.Model):
     sex = models.CharField(max_length=32,choices=gender, default='male')
     age = models.IntegerField(default=0)
 
+    nf = models.IntegerField(default=0)
+    ne = models.IntegerField(default=0)
     kf = models.IntegerField(default=0)
     ke = models.IntegerField(default=0)
     apf = models.IntegerField(default=0)
@@ -146,6 +152,8 @@ class History_JF (models.Model):
     ser = models.IntegerField(default=0)
     sir = models.IntegerField(default=0)
 
+    nf_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
+    ne_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
     kf_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
     ke_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')
     apf_eval = models.CharField(max_length=32,choices=evaluation, default='Weak')

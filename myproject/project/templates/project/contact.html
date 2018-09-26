@@ -5,9 +5,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>contact - Space Science Website Template</title>
-	<link rel="stylesheet" href="css/style.css" type="text/css">
-	<link rel="stylesheet" type="text/css" href="css/mobile.css">
-	<script src="js/mobile.js" type="text/javascript"></script>
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'project/css/style.css' %}" type="text/css">
+	<link rel="stylesheet" type="text/css" href="{% static 'project/css/mobile.css' %}">
+	<script src="{% static 'project/js/mobile.js' %}" type="text/javascript"></script>
 </head>
 <body>
     <script>
@@ -22,30 +23,30 @@
 	<div id="page">
 		<div id="header">
 			<div>
-				<a href="index.html" class="logo"><img src="images/logo.png" width="340" height="55" alt="Logo"></a>
+				<a href="/index" class="logo"><img src="{% static 'project/images/logo.png' %}" width="340" height="55" alt="Logo"></a>
 				<ul id="navigation">
-					<li>
-						<a href="index.html">Home</a>
+					<li]>
+						<a href="/index">Home</a>
 					</li>
 					<li>
-						<a href="Physical outcome measures.html">Physical outcome measures</a>
+						<a href="/physical_outcome_measures">Physical outcome measures</a>
 					</li>
-					<li class="menu">
-						<a href="measurement research.html">measurement research</a>
-						
+					<li>
+						<a href="/measurement_research">measurement research</a>	
 					</li>
-					<li class="menu">
-						<a href="self-reported measures.html">self-reported measures</a>
+					<li>
+						<a href="/self-reported_measures">self-reported measures</a>
 						
 					</li>
 					<li class="selected">
-						<a href="contact.html">Contact</a>
+						<a href="/contact">Contact</a>
 					</li>
 					<li>
-						<a id="loginword" href="login/index.html">Login</a>
+						<a id="loginword" href="/login">Login</a>
 					</li>
 				</ul>
-				<a href="login/index.html" class="login" id="loginlogo" style="display:none"><img src="images/login.png" width="50" height="50"alt=""></a>
+
+				<a href="/login" class="login" id="loginlogo" style="display:none"><img src="{% static 'project/images/login.png' %}" width="50" height="50"alt=""></a>
 			</div>
 		</div>
 		<div id="body">

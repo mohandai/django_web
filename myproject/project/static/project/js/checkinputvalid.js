@@ -151,9 +151,55 @@ function checkMotionvalid()
 		}else if(Shoulder_internal_rotation[0].value ==""||isNaN(Shoulder_internal_rotation[0].value) || Shoulder_internal_rotation[0].value <= 0){
 			alert("Input Shoulder internal rotation Not Valid");
 		}else {
-			//window.location.href = 'motionresult.html';
-			var x = document.getElementById("motion_result");
-			x.style.display = (x.style.display == 'none')?'block':'none';
+
+			data_send = {
+				'age':age[0].value,
+				'gender':document.getElementsByName("gender")[0].value,
+				'nf':Neck_flexion[0].value,
+			    'ne':Neck_extension[0].value,
+			    'kf':Knee_flexion[0].value,
+			    'ke':Knee_extension[0].value,
+			    'apf':plantarflexion[0].value,
+			    'ad':Dorsiflexion[0].value,
+			    'hf':Hip_flexion[0].value,
+			    'her':Hip_external_rotators[0].value,
+			    'hir':Hip_internal_rotators[0].value,
+			    'ef':Elbow_flexion[0].value,
+			    'ee':Elbow_extension[0].value,
+			    'ser':Shoulder_external_rotation [0].value,
+			    'sir':Shoulder_internal_rotation[0].value,
+			};
+			$.ajax({
+		        url:"/jf/submit", //提交到那里
+		        type:"POST", //提交类型
+		        data:JSON.stringify(data_send), //提交的数据
+		        success:function(data){ //success不会直接运行，当服务器有数据传输过来才会触发执行。
+		　　　　	console.log('responsed data:');
+		        console.log(data);
+		        cm = data['compare_model'];
+		        raw = data['user_raw_data'];
+		        console.log(raw);
+		        console.log(cm);
+		        $("#nf").text("Standard value: "+ cm['nf_mean'] + ", Evaluation: " + raw['ne_eval']);
+		        $("#ne").text("Standard value: "+ cm['ne_mean'] + ", Evaluation: " + raw['ne_eval']);
+		        $("#kf").text("Standard value: "+ cm['kf_mean'] + ", Evaluation: " + raw['kf_eval']);
+		        $("#ke").text("Standard value: "+ cm['ke_mean'] + ", Evaluation: " + raw['ke_eval']);
+		        $("#apf").text("Standard value: "+ cm['apf_mean'] + ", Evaluation: " + raw['apf_eval']);
+		        $("#ad").text("Standard value: "+ cm['ad_mean'] + ", Evaluation: " + raw['ad_eval']);
+		        $("#hf").text("Standard value: "+ cm['hf_mean'] + ", Evaluation: " + raw['hf_eval']);
+		        $("#her").text("Standard value: "+ cm['her_mean'] + ", Evaluation: " + raw['her_eval']);
+		        $("#hir").text("Standard value: "+ cm['hir_mean'] + ", Evaluation: " + raw['hir_eval']);
+		        $("#ef").text("Standard value: "+ cm['ef_mean'] + ", Evaluation: " + raw['ef_eval']);
+		        $("#ee").text("Standard value: "+ cm['ee_mean'] + ", Evaluation: " + raw['ee_eval']);
+		        $("#ser").text("Standard value: "+ cm['ser_mean'] + ", Evaluation: " + raw['ser_eval']);
+		        $("#sir").text("Standard value: "+ cm['sir_mean'] + ", Evaluation: " + raw['sir_eval']);
+		        
+				//window.location.href = 'motionresult.html';
+				var x = document.getElementById("motion_result");
+				x.style.display = (x.style.display == 'none')?'block':'none';
+
+		    	}
+		    })	
 		}
 	}
 	
@@ -207,9 +253,49 @@ function checkFuncvalid()
 			alert("Input Balance Not Valid");
 		}
 		else {
-			//window.location.href = 'funcresult.html';
-			var x = document.getElementById("func_result");
-			x.style.display = (x.style.display == 'none')?'block':'none';
+			console.log('send data');
+			data_send = {
+				'age':age[0].value,
+				'gender':document.getElementsByName("gender")[0].value,
+			    'fdt':Functional_Dexterity[0].value,
+			    'hpt9':nine_Hole_Peg[0].value,
+			    'seb':SEBT[0].value,
+			    'lj':Long_Jump[0].value,
+			    'mwt6':six_Minute_Walk[0].value,
+			    'vj':Vertical_jump[0].value,
+			    'tst':Stair_climb_test[0].value,
+			    'csrt':Choice_Stepping_Reaction_Time[0].value,
+			    'sts':thirty_sec_sit_to_stand_test[0].value,
+			    'botb':Balance[0].value,
+			};
+			$.ajax({
+		        url:"/fp/submit", //提交到那里
+		        type:"POST", //提交类型
+		        data:JSON.stringify(data_send), //提交的数据
+		        success:function(data){ //success不会直接运行，当服务器有数据传输过来才会触发执行。
+		　　　　	console.log('responsed data:');
+		        console.log(data);
+		        cm = data['compare_model'];
+		        raw = data['user_raw_data'];
+		        console.log(raw);
+		        console.log(cm);
+		        $("#fdt").text("Standard value: "+ cm['fdt_mean'] + ", Evaluation: " + raw['fdt_eval']);
+		        $("#hpt9").text("Standard value: "+ cm['hpt9_mean'] + ", Evaluation: " + raw['hpt9_eval']);
+		        $("#seb").text("Standard value: "+ cm['seb_mean'] + ", Evaluation: " + raw['seb_eval']);
+		        $("#lj").text("Standard value: "+ cm['lj_mean'] + ", Evaluation: " + raw['lj_eval']);
+		        $("#mwt6").text("Standard value: "+ cm['mwt6_mean'] + ", Evaluation: " + raw['mwt6_eval']);
+		        $("#vj").text("Standard value: "+ cm['vj_mean'] + ", Evaluation: " + raw['vj_eval']);
+		        $("#tst").text("Standard value: "+ cm['tst_mean'] + ", Evaluation: " + raw['tst_eval']);
+		        $("#csrt").text("Standard value: "+ cm['csrt_mean'] + ", Evaluation: " + raw['csrt_eval']);
+		        $("#sts").text("Standard value: "+ cm['sts_mean'] + ", Evaluation: " + raw['sts_eval']);
+		        $("#botb").text("Standard value: "+ cm['botb_mean'] + ", Evaluation: " + raw['botb_eval']);
+		        
+				//window.location.href = 'funcresult.html';
+				var x = document.getElementById("func_result");
+				x.style.display = (x.style.display == 'none')?'block':'none';
+
+		    	}
+		    })	
 		}
 	}
 	
