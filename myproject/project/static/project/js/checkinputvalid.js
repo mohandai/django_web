@@ -49,7 +49,7 @@ function checkIsovalid()
 		}else if(Shoulder_internal_rotators[0].value ==""||isNaN(Shoulder_internal_rotators[0].value) || Shoulder_internal_rotators[0].value <= 0){
 			alert("Input Shoulder internal rotators Not Valid");
 		}else {
-			send_data = {'age':age[0].value,
+			data_send = {'age':age[0].value,
 				'gender':document.getElementsByName("gender")[0].value,
 				'gs':grip[0].value,
 				'apfs':plantarflexors[0].value,
@@ -67,10 +67,26 @@ function checkIsovalid()
 			$.ajax({
 		        url:"/ims/submit", //提交到那里
 		        type:"POST", //提交类型
-		        data:JSON.stringify(send_data), //提交的数据
+		        data:JSON.stringify(data_send), //提交的数据
 		        success:function(data){ //success不会直接运行，当服务器有数据传输过来才会触发执行。
 		　　　　	console.log('responsed data:');
-		        console.log(data);
+		        //console.log(data);
+		        cm = data['compare_model'];
+		        raw = data['user_raw_data'];
+		        console.log(raw);
+		        console.log(cm);
+		        $("#gs").text("Standard value: "+ cm['gs_mean'] + ", Evaluation: " + raw['gs_eval']);
+		        $("#apfs").text("Standard value: "+ cm['apfs_mean'] + ", Evaluation: " + raw['apfs_eval']);
+		        $("#ads").text("Standard value: "+ cm['ads_mean'] + ", Evaluation: " + raw['ads_eval']);
+		        $("#kfs").text("Standard value: "+ cm['kfs_mean'] + ", Evaluation: " + raw['kfs_eval']);
+		        $("#kes").text("Standard value: "+ cm['kes_mean'] + ", Evaluation: " + raw['kes_eval']);
+		        $("#has").text("Standard value: "+ cm['has_mean'] + ", Evaluation: " + raw['has_eval']);
+		        $("#hers").text("Standard value: "+ cm['hers_mean'] + ", Evaluation: " + raw['hers_eval']);
+		        $("#hirs").text("Standard value: "+ cm['hirs_mean'] + ", Evaluation: " + raw['hirs_eval']);
+		        $("#efs").text("Standard value: "+ cm['efs_mean'] + ", Evaluation: " + raw['efs_eval']);
+		        $("#ees").text("Standard value: "+ cm['ees_mean'] + ", Evaluation: " + raw['ees_eval']);
+		        $("#sers").text("Standard value: "+ cm['sers_mean'] + ", Evaluation: " + raw['sers_eval']);
+		        $("#sirs").text("Standard value: "+ cm['sirs_mean'] + ", Evaluation: " + raw['sirs_eval']);
 		        
 				var x = document.getElementById("iso_result");
 				x.style.display = (x.style.display == 'none')?'block':'none';
