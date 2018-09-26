@@ -9,88 +9,90 @@ def index(request):
     pass
     return render(request,'project/index.html')
 
+def pom(request):
+    pass
+    return render(request,'project/Physical outcome measures.html')
+
 
 #--------------------------Login/logout/register--------------------------
- 
 def login(request):
-    if request.session.get('is_login',None):
-        return redirect('/')
-
-    if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        print("try login id: "+username+password)
-        message = 'all fields should be filled'
-        if username and password:  # make sure username not blank
-            username = username.strip()
-            # more validations can be added here
-            try:
-                user = User.objects.get(username=username)
-                if user.password == password:
-                    request.session['is_login'] = True
-                    request.session['user_id'] = user.uid
-                    request.session['user_name'] = user.username
-                    request.session['sex'] = user.sex
-                    print("login id: %d" % user.uid)
-                    return redirect('/')
-                else:
-                    message = "password incorrect"
-            except:
-                message = "cannot find user"
-        return render(request, 'project/login.html', {"message": message})
     return render(request, 'project/login.html')
  
+def login_validate(request):
+    if request.method == "POST":
+        response_data = {'email_found':'false', 'password_matched':'false'}
+        data = json.loads(request.body)
+        email = data['email']
+        password = data['password']
+        print("try login id: "+email+password)
+        try:
+            user = User.objects.get(email=email)
+            response_data['email_found'] = 'true'
+            if user.password == password:
+                request.session['is_login'] = True
+                request.session['user_id'] = user.uid
+                request.session['user_name'] = user.username
+                request.session['user_email'] = user.email
+                response_data['password_matched'] = 'true'
+                print("login id: %d" % user.uid)
+                return JsonResponse(response_data)
+            else:
+                return JsonResponse(response_data)
+        except:
+            return JsonResponse(response_data)
+    message = {'err_type':'invalid_request','message':'invalid_request'}
+    return JsonResponse(message)
+
 def register(request):
     if request.session.get('is_login',None):
         return redirect('/')
 
     if request.method == "POST":
-        username = request.POST.get('username')
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
-        gender = request.POST.get('gender')
-        print("try register id: "+username+password1+gender)
+        response_data = {'email_exist':'true','register_result':'fail'}
+        data = json.loads(request.body)
+        email = data['email']
+        username = data['username']
+        password = data['password']
+        print("try register id: "+username+password)
         message = 'all fields should be filled'
 
-        if password1 != password2:
-            message = "Password must be same!"
-            return render(request, 'project/register.html', {"message": message})
-        else:
-            same_name_user = User.objects.filter(username=username)
-            if same_name_user:
-                message = 'Username existed!'
-                return render(request, 'project/register.html', {"message": message})
+        same_email_user = User.objects.filter(email=email)
+        if same_email_user:
+            return JsonResponse(response_data)
 
-            new_user = User.objects.create()
-            new_user.username = username
-            new_user.password = password1
-            new_user.sex = gender
-            new_user.save()
+        new_user = User.objects.create()
+        new_user.email = email
+        new_user.username = username
+        new_user.password = password
+        new_user.save()
+        response_data['email_exist'] = 'false'
+        response_data['register_result'] = 'success'
+        ''' # automatic login
+        request.session['is_login'] = True
+        request.session['user_id'] = new_user.uid
+        request.session['user_name'] = new_user.username
+        #request.session['sex'] = new_user.sex'''
+        return JsonResponse(response_data)
 
-            request.session['is_login'] = True
-            request.session['user_id'] = new_user.uid
-            request.session['user_name'] = new_user.username
-            request.session['sex'] = new_user.sex
-            return redirect('/login/')  #jump to login
-    return render(request,'project/register.html')
+    message = {'err_type':'invalid_request','message':'invalid_request'}
+    return JsonResponse(message)
  
 def logout(request):
-    if not request.session.get('is_login', None):
-        # if not logged in
-        return redirect("/")
-    request.session.flush()
-    # or use below
-    # del request.session['is_login']
-    # del request.session['user_id']
-    # del request.session['user_name']
-    return redirect('/')
+    if request.method == "POST":
+        if not request.session.get('is_login', None):
+            message = {'logout_result':'invalid login state'}
+            return JsonResponse(message)
+        request.session.flush()
+    message = {'logout_result':'success'}
+    return JsonResponse(message)
+
 
 #---------------data API via JSON---------------
 
 def ims(request):
     if not request.session.get('is_login', None):
         return redirect("/login")
-    return render(request,'project/ims.html')
+    return render(request,'project/isotest.html')
 
 def ims_submit(request):
     if request.method == 'POST':
@@ -123,7 +125,7 @@ def fp_submit(request):
 def history(request):
     if not request.session.get('is_login', None):
         return redirect("/login")
-    return render(request,'project/history.html')
+    return render(request,'project/old/history_old.html')
 
 def history_get(request):
     if request.method == 'GET':
@@ -141,11 +143,13 @@ def history_get(request):
 
 def retrieve_history(userid, test_model, history_obj):
     #data = history_obj.objects.filter(userid = userid).values()
-    raw_data = list(history_obj.objects.filter(userid = userid).values())
+    userobj = User.objects.get(uid=userid)
+    raw_data = list(history_obj.objects.filter(user = userobj).values())
     history_list = []
     for item in raw_data:
         compare_model = test_model.objects.filter(age_group = get_age_group(item['age'])).filter( sex = item['sex']).values()[0]
         del compare_model['id']
+        del item['user_id']
         history_item = {'history_item':item, 'compare_model':compare_model}
         history_list.append(history_item)
     return history_list
@@ -157,6 +161,7 @@ def insert_and_response(request, test_model, history_obj):
 
     data = json.loads(request.body)    
     userid = request.session.get('user_id')
+    userobj = User.objects.get(uid=userid)
 
     message = {'message':'Invalid age!','err_type':'invalid_input'}
     try:
@@ -208,12 +213,14 @@ def insert_and_response(request, test_model, history_obj):
             message = {'message':'Invalid input type!','err_type':'invalid_input'}
             return JsonResponse(message)
 
-    new_history = history_obj(userid = userid, sex = gender, age = age, **insert_data)
+    new_history = history_obj(user = userobj, sex = gender, age = age, **insert_data)
     new_history.save()
 
     new_history = history_obj.objects.filter(id = new_history.id).values()[0]
+    print('new history: ')
+    print (new_history)
     del new_history['id']
-    del new_history['userid']
+    del new_history['user_id']
     print('print new history:')
     print(new_history)
     print('data saved!')

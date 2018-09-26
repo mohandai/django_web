@@ -16,14 +16,14 @@ evaluation = (
 class User(models.Model):
 
     uid = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=128,unique=True)
+    username = models.CharField(max_length=128)
     password = models.CharField(max_length=256)
-    sex = models.CharField(max_length=32,choices=gender, default='male')
-    #email = models.EmailField(unique=True, default='123@123.com')
+    #sex = models.CharField(max_length=32,choices=gender, default='male')
+    email = models.EmailField(unique=True, default='123@123.com')
     c_time = models.DateTimeField(auto_now_add=True)
  
     def __str__(self):
-        return self.username
+        return self.email
 
 class IMS (models.Model):
 
@@ -60,7 +60,7 @@ class IMS (models.Model):
         return str(self.sex)+' '+str(self.age_group)
 
 class History_IMS (models.Model):
-    userid = models.IntegerField(default=0)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
 
     sex = models.CharField(max_length=32,choices=gender, default='male')
     age = models.IntegerField(default=0)
@@ -129,7 +129,7 @@ class JF (models.Model):
         return str(self.sex)+' '+str(self.age_group)
 
 class History_JF (models.Model):
-    userid = models.IntegerField(default=0)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
 
     sex = models.CharField(max_length=32,choices=gender, default='male')
     age = models.IntegerField(default=0)
@@ -194,7 +194,7 @@ class FP (models.Model):
         return str(self.sex)+' '+str(self.age_group)
 
 class History_FP (models.Model):
-    userid = models.IntegerField(default=0)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
 
     sex = models.CharField(max_length=32,choices=gender, default='male')
     age = models.IntegerField(default=0)
