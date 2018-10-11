@@ -38,4 +38,5 @@ urlpatterns = [
     path('fp/', views.fp),
     path('history/get', views.history_get),
     path('history/', views.history),
+    #path('csv/', views.csv_input),
 ]

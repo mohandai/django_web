@@ -3,6 +3,7 @@ from .models import User, IMS, History_IMS, JF, History_JF, FP, History_FP
 from django.http import JsonResponse
 #from django.core import serializers
 import json
+import csv
 
 # Create your views here.
 def index(request):
@@ -245,3 +246,44 @@ def get_age_group(age):
     if int(age) >= 100:
         return 100
     return (age-1)//10*10+1
+
+#---------------------- csv handler --------------------
+def csv_input(request):
+    #f_ims = csv2dict('female - ims.csv', sex="female", model_obj = IMS)
+    #f_jf = csv2dict('female - jf.csv', sex="female", model_obj = JF)
+    #f_fp = csv2dict('female - fp.csv', sex="female", model_obj = FP)
+    #m_ims = csv2dict('male - ims.csv', sex="male", model_obj = IMS)
+    #m_fp = csv2dict('male - fp.csv', sex="male", model_obj = FP)
+    #m_jf = csv2dict('male - jf.csv', sex="male", model_obj = JF)
+    message = {'data':'all','type':'success'}
+    return JsonResponse(message)
+
+def csv2dict(in_file, sex, model_obj):
+    key = 'age_group'
+    new_list = []
+    with open(in_file, 'rt', encoding="utf-8") as f:
+        reader = csv.reader(f, delimiter=',')
+        fieldnames = next(reader)
+        reader = csv.DictReader(f, fieldnames=fieldnames, delimiter=',')
+        for row in reader:
+            keys = row.keys()
+
+            insert_data = {}
+            for k in keys:
+                try:
+                    if row[k] == '':
+                        insert_data[k] = 0
+                    #elif k == 'csrt_sd' or k == 'csrt_mean':
+                    #    insert_data[k] = float(row[k])
+                    else:
+                        insert_data[k] = int(row[k])
+
+                except:
+                    insert_data = {'message':'Invalid input type!','err_type':'invalid_input'}
+                    print (insert_data)
+
+            new_obj = model_obj(sex = sex, **insert_data)
+            new_obj.save()
+            print(insert_data)
+            new_list.append(row)
+    return new_list

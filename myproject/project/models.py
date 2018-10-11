@@ -183,7 +183,7 @@ class FP (models.Model):
     mwt6_mean = models.IntegerField(default=0)
     vj_mean = models.IntegerField(default=0)
     tst_mean = models.IntegerField(default=0)
-    csrt_mean = models.IntegerField(default=0)
+    csrt_mean = models.FloatField(default=0)
     sts_mean = models.IntegerField(default=0)
     botb_mean = models.IntegerField(default=0)
 
@@ -194,7 +194,7 @@ class FP (models.Model):
     mwt6_sd = models.IntegerField(default=0)
     vj_sd = models.IntegerField(default=0)
     tst_sd = models.IntegerField(default=0)
-    csrt_sd = models.IntegerField(default=0)
+    csrt_sd = models.FloatField(default=0)
     sts_sd = models.IntegerField(default=0)
     botb_sd = models.IntegerField(default=0)
 
@@ -214,7 +214,7 @@ class History_FP (models.Model):
     mwt6 = models.IntegerField(default=0)
     vj = models.IntegerField(default=0)
     tst = models.IntegerField(default=0)
-    csrt = models.IntegerField(default=0)
+    csrt = models.FloatField(default=0)
     sts = models.IntegerField(default=0)
     botb = models.IntegerField(default=0)
 
